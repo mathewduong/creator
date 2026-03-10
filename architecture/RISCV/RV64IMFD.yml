@@ -1403,7 +1403,7 @@ instructions:
         - field: funct3
           value: "000"
       definition: |
-        if (registers[rs1] === registers[rs2]) 
+        if (registers[rs1] === registers[rs2])
           registers["PC"] = registers["PC"] + imm;
       help: Take the branch if registers rs1 and rs2 are equal.
 
@@ -1467,7 +1467,7 @@ instructions:
         - field: funct3
           value: "001"
       definition: |
-        if (registers[rs1] !== registers[rs2]) 
+        if (registers[rs1] !== registers[rs2])
           registers["PC"] = registers["PC"] + imm;
       help: Take the branch if registers rs1 and rs2 are not equal.
 
@@ -1547,7 +1547,9 @@ instructions:
         - field: funct3
           value: "000"
       definition: |
-        registers[rd] = CAPI.MEM.read(imm + registers[rs1], 1, rd);
+        let addr = CAPI.FP.int2uint(registers[rs1], 32) + imm;
+        registers[rd] = CAPI.MEM.read(addr, 1, rd);
+        registers[rd] = CAPI.FP.int2uint(CAPI.FP.uint2int(registers[rd], 8));
 
       help: Loads a 8-bit value from memory and sign-extends this to XLEN bits before storing it in register rd.
     - name: lbu
@@ -1572,7 +1574,9 @@ instructions:
         - field: funct3
           value: "001"
       definition: |
-        registers[rd] = CAPI.MEM.read(imm + registers[rs1], 2, rd);
+        let addr = CAPI.FP.int2uint(registers[rs1], 32) + imm;
+        registers[rd] = CAPI.MEM.read(addr, 2, rd);
+        registers[rd] = CAPI.FP.int2uint(CAPI.FP.uint2int(registers[rd], 16));
 
       help: Loads a 16-bit value from memory and sign-extends this to XLEN bits before storing it in register rd.
     - name: lhu
@@ -1613,6 +1617,7 @@ instructions:
       definition: |
         var addr = CAPI.FP.int2uint(registers[rs1]) + imm;
         registers[rd] = CAPI.MEM.read(addr, 4, rd);
+        registers[rd] = CAPI.FP.int2uint(CAPI.FP.uint2int(registers[rd], 32));
         registers[rd] = CAPI.FP.int2uint(registers[rd]);
       help: Loads a 32-bit value from memory and zero-extends this to 64 bits
         before storing it in register rd.
